@@ -2,6 +2,10 @@ const express = require('express')
 const app = express()
 const port = 3000
 const mysql = require('mysql2/promise');
+const { v4: uuidv4 } = require('uuid');
+const multer = require("multer");
+const path = require("path");
+const fs = require('fs')
 
 const pool = mysql.createPool({
   host: 'db-test-tirocinio.comgurfumldw.eu-west-3.rds.amazonaws.com',
@@ -185,6 +189,53 @@ app.get('/users/tag/:tagId', async (req, res) => {
     currentTagName, 'users': response
   })
 })
+
+//storage
+let upload = () =>{
+let storage = multer.diskStorage({
+  destination: './uploadImgProfile' ,
+  filename: (req, file, cb) => {
+      return cb(null, `${file.fieldname}_${uuidv4()}${path.extname(file.originalname)}`)
+  }
+})
+let uploadImg = multer({
+  storage
+})
+return uploadImg
+}
+
+app.put("/users/:username/uploadImgProfile", upload().single('profile'), async (req, res) => {
+  let currentUser = req.params.username
+
+
+  let oldImgProfileQ = await pool.query(`SELECT imgProfile from users WHERE username = "${currentUser}"`)
+  let oldImgProfile = oldImgProfileQ[0][0]['imgProfile']
+  fs.unlink(`${[[oldImgProfile]]}`, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  })
+  
+  console.log(oldImgProfile)
+
+
+  await pool.query(`UPDATE users SET imgProfile = "${req.file.destination}/${req.file.filename}" WHERE username = "${currentUser}"`)
+
+  console.log(`UPDATE users SET imgProfile = "${req.file.destination}/${req.file.filename}" WHERE username = "${currentUser}"`)
+
+  res.send("Immagine caricata con successo")
+})
+
+function errHandler(err, req, res, next) {
+  if (err instanceof multer.MulterError) {
+      res.json({
+          success: 0,
+          message: err.message
+      })
+  }
+}
+app.use(errHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
