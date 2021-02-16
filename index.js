@@ -20,22 +20,6 @@ const pool = mysql.createPool({
 let bodyParser = require('body-parser');
 app.use(bodyParser.json())
 
-
-app.get('/', (req, res) => {
-  res.send('Ciao in get')
-})
-
-
-app.post('/', (req, res) => {
-  console.log(req.body)
-  if (req.headers['aw-lang'] === 'it') {
-    res.send('Ciao in post');
-  }
-  else {
-    res.send('Hello in post');
-  }
-})
-
 ///users/:username GET - Info dell'utente 
 app.get('/user/:username', async (req, res) => {
   let username = req.params.username
