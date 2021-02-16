@@ -204,6 +204,8 @@ let uploadImg = multer({
 return uploadImg
 }
 
+///users/:username/uploadImgProfile PUT - Aggiunge un'immagine profilo ad un utente
+
 app.put("/users/:username/uploadImgProfile", upload().single('profile'), async (req, res) => {
   let currentUser = req.params.username
 
