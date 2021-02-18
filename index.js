@@ -214,7 +214,7 @@ app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv
 })
 
 //csv upload and import
-app.put("/uploadcsv", upload('./upload/uploadcsv', "", true).single('csv'), async (req, res) => {
+app.post("/uploadcsv", upload('./upload/uploadcsv', "", true).single('csv'), async (req, res) => {
 
 
   let stream = fs.createReadStream(`${req.file.destination}/${req.file.filename}`);
