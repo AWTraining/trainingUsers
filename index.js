@@ -172,11 +172,16 @@ app.get('/users/tag/:tagId', async (req, res) => {
 })
 
 //storage
-let upload = (destinationPath, fileName) => {
+let upload = (destinationPath, fileName, originalname) => {
   let storage = multer.diskStorage({
     destination: destinationPath,
     filename: (req, file, cb) => {
-      return cb(null, `${file.fieldname}${fileName}${path.extname(file.originalname)}`)
+      if(originalname === false){
+        return cb(null, `${fileName}_${path.extname(file.originalname)}`)
+      }
+      else{
+        return cb(null, `${file.originalname}`)       
+      }
     }
   })
   let uploaded = multer({
@@ -187,7 +192,7 @@ let upload = (destinationPath, fileName) => {
 
 ///users/:username/uploadImgProfile PUT - Aggiunge un'immagine profilo ad un utente
 
-app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv4()).single('profile'), async (req, res) => {
+app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv4(), false).single('profile'), async (req, res) => {
   let currentUserid = req.params.id
 
 
@@ -209,7 +214,7 @@ app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv
 })
 
 //csv upload and import
-app.put("/uploadcsv", upload('./upload/uploadcsv', "").single('csv'), async (req, res) => {
+app.put("/uploadcsv", upload('./upload/uploadcsv', "", true).single('csv'), async (req, res) => {
 
 
   let stream = fs.createReadStream(`${req.file.destination}/${req.file.filename}`);
