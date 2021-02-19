@@ -378,19 +378,19 @@ app.get('/legalUsers/carmodel/:carmodel/page/:page', async (req, res) => {
 
 //Lista utenti Maggiorenni registrati da più di x mesi che vivono in uno stato X
 app.get('/legalUsers/country/:country/page/:page', async (req, res) => {
-let signingIn = req.params.signingIn
+let country = req.params.country
 let page = req.params.page - 1
 let result;
-  let countQ = await pool.query(`SELECT COUNT(*) FROM test.users`)
+  let countQ = await pool.query(`SELECT COUNT(*) FROM test.users INNER JOIN test.countries ON test.users.id_country = test.countries.id WHERE YEAR(CURDATE()) - YEAR(birthdate) > 18 AND country = "${country}"`)
   if(req.params.page > Math.ceil(countQ[0][0]["COUNT(*)"]/20)){   
     return res.send('page not found', 404) 
    }
  else{
   if (page < 1){
-    result = await pool.query(`SELECT first_name, last_name FROM users INNER JOIN test.car_models ON test.users.id_car_model = test.car_models.id WHERE YEAR(CURDATE()) - YEAR(birthdate) > 18 AND car_model = "${carmodel}" ORDER BY test.users.id LIMIT ${page}, 20`)
+    result = await pool.query(`SELECT first_name, last_name FROM users INNER JOIN test.countries ON test.users.id_country = test.countries.id WHERE YEAR(CURDATE()) - YEAR(birthdate) > 18 AND country = "${country}" ORDER BY test.users.id LIMIT ${page}, 20`)
   }
 else {
-  
+  result = await pool.query(`SELECT first_name, last_name FROM users INNER JOIN test.countries ON test.users.id_country = test.countries.id WHERE YEAR(CURDATE()) - YEAR(birthdate) > 18 AND country = "${country}" ORDER BY test.users.id LIMIT ${page}, 20`)
    }
 console.log(result[0][0])
 let response = result[0][0]
