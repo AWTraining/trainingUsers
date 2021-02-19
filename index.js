@@ -249,7 +249,7 @@ app.post("/uploadcsv", upload('./upload/uploadcsv', "", true).single('csv'), asy
       signup_date DATE NULL DEFAULT NULL,
       birthdate DATE NULL DEFAULT NULL,
       gender CHAR(1) NULL DEFAULT NULL,
-      imgProfile VARCHAR(255) NULL DEFAULT NULL,
+      img_profile VARCHAR(255) NULL DEFAULT NULL,
       id_car_model INT NULL DEFAULT NULL,
       id_city INT NULL DEFAULT NULL,
       id_country INT NULL DEFAULT NULL,
