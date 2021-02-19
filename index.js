@@ -176,11 +176,11 @@ let upload = (destinationPath, fileName, originalname) => {
   let storage = multer.diskStorage({
     destination: destinationPath,
     filename: (req, file, cb) => {
-      if(originalname === false){
+      if (originalname === false) {
         return cb(null, `${fileName}_${path.extname(file.originalname)}`)
       }
-      else{
-        return cb(null, `${file.originalname}`)       
+      else {
+        return cb(null, `${file.originalname}`)
       }
     }
   })
@@ -196,8 +196,8 @@ app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv
   let currentUserid = req.params.id
 
 
-  let oldImgProfileQ = await pool.query(`SELECT imgProfile from users WHERE id = "${currentUserid}"`)
-  let oldImgProfile = oldImgProfileQ[0][0]['imgProfile']
+  let oldImgProfileQ = await pool.query(`SELECT img_profile from users WHERE id = "${currentUserid}"`)
+  let oldImgProfile = oldImgProfileQ[0][0]['img_profile']
   fs.unlink(`${[[oldImgProfile]]}`, (err) => {
     if (err) {
       console.error(err)
@@ -208,7 +208,7 @@ app.put("/users/:id/uploadImgProfile", upload('./upload/uploadImgProfile', uuidv
   console.log(oldImgProfile)
 
 
-  await pool.query(`UPDATE users SET imgProfile = "${req.file.destination}/${req.file.filename}" WHERE id = "${currentUserid}"`)
+  await pool.query(`UPDATE users SET img_profile = "${req.file.destination}/${req.file.filename}" WHERE id = "${currentUserid}"`)
 
   res.send("Immagine caricata con successo")
 })
